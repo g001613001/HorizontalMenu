@@ -24,6 +24,7 @@ class View4HorizontalMenu: UIView {
     fileprivate var buttons = [UIButton]()//用來儲存所有的按鈕
     
     fileprivate var bottomLine:UIView!
+    fileprivate var lastDidSelectButtonIndex:Int! = 0
     
     init(frame: CGRect, menuTitles:[String], selectMenuBackgroundColor:UIColor , deselectMenuBackgroundColor:UIColor,selectMenuTitleColor:UIColor, deselectMenuTitleColor:UIColor, showBottomLine:Bool, bottomLineColor:UIColor, bottomLineHeight:CGFloat) {
         super.init(frame: frame)
@@ -53,25 +54,24 @@ class View4HorizontalMenu: UIView {
         for (index, button) in buttons.enumerated() {
             button.frame = CGRect(x: menuWidth * CGFloat(index), y: 0, width: menuWidth, height: viewFrame.height)
         }
+        bottomLine.frame = CGRect(x: menuWidth * CGFloat(lastDidSelectButtonIndex), y: self.bounds.height - bottomLineHeight, width: menuWidth, height: bottomLine.bounds.height)
     }
     public func setDefaultSelectButton(defaultButtonIs:Int? = nil){
         if let defaultButtonIs = defaultButtonIs {
+            lastDidSelectButtonIndex = defaultButtonIs
             if defaultButtonIs > buttons.count {
                 print("Error default button index out of buttons range.")
                 return
             }
-            for button in buttons {
-                button.setTitleColor(deselectMenuTitleColor, for: .normal)
-                button.backgroundColor = deselectMenuBackgroundColor
-            }
+             changeAllButtonsTitleColorAndBackgroundColor()
             let defaultButton = buttons[defaultButtonIs]
-            defaultButton.setTitleColor(selectMenuTitleColor, for: .normal)
-            defaultButton.backgroundColor = selectMenuBackgroundColor
+            UIView.animate(withDuration: 0.3, animations: { 
+                defaultButton.setTitleColor(self.selectMenuTitleColor, for: .normal)
+                defaultButton.backgroundColor = self.selectMenuBackgroundColor
+            })
+            
         }else{
-            for button in buttons {
-                button.setTitleColor(deselectMenuTitleColor, for: .normal)
-                button.backgroundColor = deselectMenuBackgroundColor
-            }
+             changeAllButtonsTitleColorAndBackgroundColor()
         }
        
     }
@@ -96,10 +96,12 @@ class View4HorizontalMenu: UIView {
     @objc private func buttonAction(sender:UIButton){
         print("sender=\(sender.tag)")
         setDefaultSelectButton()
-        sender.setTitleColor(selectMenuTitleColor, for: .normal)
-        sender.backgroundColor = selectMenuBackgroundColor
         delegate?.sendDidSelectMuneTag(buttonTag: sender.tag)
-        UIView.animate(withDuration: 0.3) { 
+        lastDidSelectButtonIndex = sender.tag
+        UIView.animate(withDuration: 0.3) {
+            sender.setTitleColor(self.selectMenuTitleColor, for: .normal)
+            sender.backgroundColor = self.selectMenuBackgroundColor
+
             self.bottomLine.frame.origin.x = sender.bounds.width * CGFloat(sender.tag)
             self.layoutIfNeeded()
         }
@@ -112,6 +114,16 @@ class View4HorizontalMenu: UIView {
         bottomLine.backgroundColor = bottomLineColor
         self.addSubview(bottomLine)
 
+    }
+    
+    private func changeAllButtonsTitleColorAndBackgroundColor(){
+        UIView.animate(withDuration: 0.3) { 
+            for button in self.buttons {
+                button.setTitleColor(self.deselectMenuTitleColor, for: .normal)
+                button.backgroundColor = self.deselectMenuBackgroundColor
+            }
+        }
+        
     }
     
 }

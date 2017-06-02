@@ -16,7 +16,7 @@ class TestVC: UIViewController {
     @IBOutlet weak var view4HorizontalMenu: UIView!
     lazy fileprivate var horizontalMenu:View4HorizontalMenu! = { [weak self] in
         guard let view4HorizontalMenu = self?.view4HorizontalMenu else { return nil }
-        let view = View4HorizontalMenu(frame: view4HorizontalMenu.bounds, menuTitles: ["測試1","測試2","測試3","測試4"], selectMenuBackgroundColor: .red, deselectMenuBackgroundColor: .green, selectMenuTitleColor: .white, deselectMenuTitleColor: .black, showBottomLine: true, bottomLineColor: .yellow, bottomLineHeight: 5)
+        let view = View4HorizontalMenu(frame: view4HorizontalMenu.bounds, menuTitles: ["測試1","測試2","測試3","測試4","測試5"], selectMenuBackgroundColor: .red, deselectMenuBackgroundColor: .green, selectMenuTitleColor: .white, deselectMenuTitleColor: .black, showBottomLine: true, bottomLineColor: .yellow, bottomLineHeight: 5)
         return view
     }()
     
